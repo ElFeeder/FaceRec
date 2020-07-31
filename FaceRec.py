@@ -32,10 +32,12 @@ for name in os.listdir(DIR_KNOWN):                      # List of all the names 
             # Add the face and the name to the lists
             knownFaces.append(encoding)
             knownNames.append(name)
+
         elif(len(face_recognition.face_encodings(image)) > 1):
-            print("/tFile " + filename + " had more than one face")
+            print(" File " + filename + " had more than one face")
+
         elif(len(face_recognition.face_encodings(image)) < 1):
-            print("File " + filename + " had no faces")
+            print(" File " + filename + " had no faces")
 
 
 print("Processing unknown faces...")
@@ -54,18 +56,34 @@ for filename in os.listdir(DIR_UNKNOWN):
     # For each encoding that we have, compare against encodings of known faces
     for faceEncoding, faceLocation in zip(encodings, locations):
         results = face_recognition.compare_faces(knownFaces, faceEncoding, tolerance)
+        print(results)
 
         # If we have a match, the associated name will be in the same position as the face
-        # was in knownFaces
-        if True in results:
-            match = knownNames[results.index(True)]
+        # was in knownFaces. We'll have to handle the array "results" in a way that we can
+        # work with (results is an array of arrays)
+        index = -1
+        
+        # subdivision = second layer array we're at
+        for subdivision in results:
+            isMatch = 1
+            index += 1
+
+            for result in subdivision:
+                if result == False:     # At least one false and it's not a match
+                    isMatch = 0
+                    break
+
+            if (isMatch == 0):
+                break
+    
+            match = knownNames[index]
             print("Match found: " + match)
 
             # Draw a rectangle around the face
             topLeft = (faceLocation[3], faceLocation[0])
             bottomRight = (faceLocation[1], faceLocation[2])
 
-            # Have a specific color to each face
+            # Have a specific color for each name
             color = [(ord(c.lower())-97)*8 for c in match[:3]]
 
             cv2.rectangle(image, topLeft, bottomRight, color, frameThickness)
@@ -78,6 +96,9 @@ for filename in os.listdir(DIR_UNKNOWN):
 
             # Name the rectangle
             cv2.putText(image, match, (faceLocation[3] + 10, faceLocation[2] + 15), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (200, 200, 200), fontThickness)
+
+            break
+
 
     # Show the image until I press something
     cv2.imshow(filename, image)
