@@ -6,7 +6,7 @@ import cv2
 DIR_KNOWN = "Known"     # Directories where the faces are
 DIR_UNKNOWN = "Unknown"
 
-tolerance = 0.6         # Tolerance of a match (% of accuracy permitted)
+tolerance = 0.2         # Tolerance of a match (% of accuracy permitted)
 
 frameThickness = 3      # These two are to draw rectangles around the faces
 fontThickness = 2
@@ -47,7 +47,7 @@ for filename in os.listdir(DIR_UNKNOWN):
     image = face_recognition.load_image_file(f"{DIR_UNKNOWN}/{filename}")
 
     # Find every face in each given image and encode each one
-    locations = face_recognition.face_locations(image, model=model)
+    locations = face_recognition.face_locations(image, model = model)
     encodings = face_recognition.face_encodings(image, locations)
 
     # Now to draw on the image, we need to make it workable by CV2
@@ -76,6 +76,7 @@ for filename in os.listdir(DIR_UNKNOWN):
             if (isMatch == 0):
                 break
     
+            # If we get to this point, it's a match
             match = knownNames[index]
             print("Match found: " + match)
 
