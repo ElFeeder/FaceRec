@@ -8,7 +8,7 @@ DIR_UNKNOWN = "Unknown"
 
 tolerance = 0.05         # Tolerance of a match
 
-frameThickness = 3      # These two are to draw rectangles around the faces
+frameThickness = 2      # These two are to draw rectangles around the faces
 fontThickness = 2
 
 model = "cnn"           # What NN we'll be using
@@ -18,14 +18,18 @@ knownNames = []                         # Give a name to each face
 facesNumber = []                        # How many images of each face
 diffFaces = len(os.listdir(DIR_KNOWN))  # How many different faces
 
+
 print("Loading known faces...")
 
 for name in os.listdir(DIR_KNOWN):                      # List of all the names in the Known directory
+    print("")
     print("Checking " + name + " images")
+    print("")
     total = 0
 
     for filename in os.listdir(f"{DIR_KNOWN}/{name}"):  # List all files there
         print("Checking " + filename)
+
         # Load an image
         image = face_recognition.load_image_file(f"{DIR_KNOWN}/{name}/{filename}")
         
@@ -47,6 +51,7 @@ for name in os.listdir(DIR_KNOWN):                      # List of all the names 
     facesNumber.append(total)
 
 
+print("")
 print("Processing unknown faces...")
 
 for filename in os.listdir(DIR_UNKNOWN):
@@ -98,6 +103,7 @@ for filename in os.listdir(DIR_UNKNOWN):
             if (good > 0.8 * facesNumber[person]):
                 match = knownNames[count - 1]
 
+                print("")
                 print("Match found: " + match)
 
                 # Draw a rectangle around the face
@@ -127,3 +133,4 @@ for filename in os.listdir(DIR_UNKNOWN):
     cv2.imshow(filename, image)
     cv2.waitKey(0)
     cv2.destroyWindow(filename)
+    
